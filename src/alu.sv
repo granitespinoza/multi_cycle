@@ -1,7 +1,7 @@
 module alu(
     input wire [31:0] a,
     input wire [31:0] b,
-    input wire [2:0] ALUControl,
+    input wire [3:0] ALUControl,
     output reg [31:0] Result,
     output reg [3:0] ALUFlags
 );
@@ -9,18 +9,21 @@ module alu(
 
     always @(*)
         case (ALUControl)
-            3'b000: Result = a + b;
-            3'b001: Result = a - b;
-            3'b010: Result = a & b;
-            3'b011: Result = a | b;
-            3'b100: Result = a * b;
+            4'b0000: Result = a + b;
+            4'b0001: Result = a - b;
+            4'b0010: Result = a & b;
+            4'b0011: Result = a | b;
+            4'b0100: Result = a * b;
+            4'b0101: Result = $signed(a) * $signed(b);
+            4'b0110: Result = a * b;
+            4'b0111: Result = b != 0 ? a / b : 32'hxxxxxxxx;
             default: Result = 32'hxxxxxxxx;
         endcase
 
     always @(*) begin
         ALUFlags[3] = Result[31];
         ALUFlags[2] = (Result == 32'h00000000);
-        ALUFlags[1] = (ALUControl==3'b000 || ALUControl==3'b001) ? sum[32] : 1'b0;
-        ALUFlags[0] = (ALUControl==3'b000 || ALUControl==3'b001) ? (sum[31]^a[31]^b[31]^sum[32]) : 1'b0;
+        ALUFlags[1] = (ALUControl==4'b0000 || ALUControl==4'b0001) ? sum[32] : 1'b0;
+        ALUFlags[0] = (ALUControl==4'b0000 || ALUControl==4'b0001) ? (sum[31]^a[31]^b[31]^sum[32]) : 1'b0;
     end
 endmodule
