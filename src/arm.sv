@@ -1,3 +1,5 @@
+// Ajustes para nuevas operaciones de la ALU:
+// ALUControl ahora es de 4 bits para codificar UMUL, SMUL y DIV.
 module arm(
     input wire clk,
     input wire reset,

@@ -1,3 +1,4 @@
+// Ajustado para 4 bits de ALUControl que permiten MUL y DIV.
 module controller(
     input wire clk,
     input wire reset,

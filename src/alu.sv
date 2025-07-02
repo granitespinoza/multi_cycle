@@ -1,3 +1,7 @@
+// Cambios para habilitar multiplicación y división:
+// 1. Se amplió ALUControl a 4 bits para codificar nuevas instrucciones.
+// 2. Se agregaron UMUL y SMUL para multiplicaciones con y sin signo.
+// 3. Se agregó DIV protegido contra división por cero.
 module alu(
     input wire [31:0] a,
     input wire [31:0] b,

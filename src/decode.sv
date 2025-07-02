@@ -1,3 +1,6 @@
+// Cambios para soportar multiplicación y división:
+// 1. Se amplió la señal ALUControl a 4 bits.
+// 2. Se codificaron las operaciones UMUL, SMUL y DIV en la lógica de decodificación.
 module decode(
     input wire clk,
     input wire reset,

@@ -1,3 +1,6 @@
+// Cambios en la FSM para soportar multiplicación y división:
+// 1. Se agregaron los estados DIV1 y DIV2 para ejecutar la operación DIV en dos ciclos.
+// 2. Se detecta la instrucción DIV en la etapa DECODE.
 module mainfsm(
     input wire clk,
     input wire reset,
