@@ -42,10 +42,10 @@ module decode(
                                  Funct[4:1] == 4'b0010 ? 4'b0001 :
                                  Funct[4:1] == 4'b0000 ? 4'b0010 :
                                  Funct[4:1] == 4'b1100 ? 4'b0011 :
-                                 Funct[4:1] == 4'b0001 ? 4'b0100 :
-                                 Funct[4:1] == 4'b1000 ? 4'b0101 :
+                                 Funct[4:1] == 4'b0001 ? 4'b0100 : // UMUL
+                                 Funct[4:1] == 4'b1000 ? 4'b0101 : // SMUL
                                  Funct[4:1] == 4'b1001 ? 4'b0110 :
-                                 Funct[4:1] == 4'b1010 ? 4'b0111 :
+                                 Funct[4:1] == 4'b1010 ? 4'b0111 : // DIV
                                  4'bxxxx) : 4'b0000;
 
     assign FlagW[1] = ALUOp & Funct[0];
