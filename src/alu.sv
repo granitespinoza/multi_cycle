@@ -1,3 +1,7 @@
+// Cambios para habilitar multiplicación y división:
+// 1. Se amplió ALUControl a 4 bits para codificar nuevas instrucciones.
+// 2. Se agregaron UMUL y SMUL para multiplicaciones con y sin signo.
+// 3. Se agregó DIV protegido contra división por cero.
 module alu(
     input wire [31:0] a,
     input wire [31:0] b,
@@ -13,10 +17,10 @@ module alu(
             4'b0001: Result = a - b;
             4'b0010: Result = a & b;
             4'b0011: Result = a | b;
-            4'b0100: Result = a * b;
-            4'b0101: Result = $signed(a) * $signed(b);
-            4'b0110: Result = a * b;
-            4'b0111: Result = b != 0 ? a / b : 32'hxxxxxxxx;
+            4'b0100: Result = a * b;                   // UMUL: multiplicación sin signo
+            4'b0101: Result = $signed(a) * $signed(b); // SMUL: multiplicación con signo
+            4'b0110: Result = a * b;                   // Reservado para extensiones
+            4'b0111: Result = b != 0 ? a / b : 32'hxxxxxxxx; // DIV: división protegida
             default: Result = 32'hxxxxxxxx;
         endcase
 

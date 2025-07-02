@@ -1,3 +1,4 @@
+// Adaptado para ALUControl de 4 bits y nuevas operaciones MUL/DIV.
 module datapath(
     input wire clk,
     input wire reset,

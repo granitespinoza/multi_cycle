@@ -1,3 +1,6 @@
+// Cambios en la FSM para soportar multiplicación y división:
+// 1. Se agregaron los estados DIV1 y DIV2 para ejecutar la operación DIV en dos ciclos.
+// 2. Se detecta la instrucción DIV en la etapa DECODE.
 module mainfsm(
     input wire clk,
     input wire reset,
@@ -29,8 +32,8 @@ module mainfsm(
                      ALUWB    = 8,
                      BRANCH   = 9,
                      UNKNOWN  = 10,
-                     DIV1     = 11,
-                     DIV2     = 12;
+                     DIV1     = 11, // Inicio de la división
+                     DIV2     = 12; // Fin de la división
 
     always @(posedge clk or posedge reset)
         if (reset)
@@ -46,7 +49,7 @@ module mainfsm(
                             if (Funct[5])
                                 nextstate = EXECUTEI;
                             else if (Funct[4:1] == 4'b1010)
-                                nextstate = DIV1;
+                                nextstate = DIV1; // Detecta la instrucción DIV
                             else
                                 nextstate = EXECUTER;
                         end
@@ -56,8 +59,8 @@ module mainfsm(
                        endcase
             EXECUTER: nextstate = ALUWB;
             EXECUTEI: nextstate = ALUWB;
-            DIV1:     nextstate = DIV2;
-            DIV2:     nextstate = ALUWB;
+            DIV1:     nextstate = DIV2; // Etapa 1 de DIV
+            DIV2:     nextstate = ALUWB; // Etapa 2 de DIV
             MEMADR:   nextstate = Funct[0] ? MEMRD : MEMWR;
             MEMRD:    nextstate = MEMWB;
             MEMWR:    nextstate = FETCH;
@@ -73,8 +76,8 @@ module mainfsm(
             DECODE:   controls = 13'b0000001001100;
             EXECUTER: controls = 13'b0000000000001;
             EXECUTEI: controls = 13'b0000000000101;
-            DIV1:     controls = 13'b0000000000001;
-            DIV2:     controls = 13'b0000000000001;
+            DIV1:     controls = 13'b0000000000001; // Señales para DIV paso 1
+            DIV2:     controls = 13'b0000000000001; // Señales para DIV paso 2
             ALUWB:    controls = 13'b0001000000000;
             MEMADR:   controls = 13'b0000000000100;
             MEMWR:    controls = 13'b0010010000000;
