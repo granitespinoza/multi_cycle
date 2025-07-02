@@ -13,10 +13,10 @@ module alu(
             4'b0001: Result = a - b;
             4'b0010: Result = a & b;
             4'b0011: Result = a | b;
-            4'b0100: Result = a * b;
-            4'b0101: Result = $signed(a) * $signed(b);
-            4'b0110: Result = a * b;
-            4'b0111: Result = b != 0 ? a / b : 32'hxxxxxxxx;
+            4'b0100: Result = a * b;                   // UMUL: multiplicación sin signo
+            4'b0101: Result = $signed(a) * $signed(b); // SMUL: multiplicación con signo
+            4'b0110: Result = a * b;                   // Reservado para extensiones
+            4'b0111: Result = b != 0 ? a / b : 32'hxxxxxxxx; // DIV: división protegida
             default: Result = 32'hxxxxxxxx;
         endcase
 
