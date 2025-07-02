@@ -4,8 +4,17 @@
 // Se incluyen todos los módulos del procesador multi-ciclo.
 // Se añadieron comentarios en español para UMUL, SMUL y DIV
 // y una breve explicación del datapath y la tabla de ALUControl.
+// Orden de modificación para UMUL, SMUL y DIV:
+// 1) alu        - nuevas operaciones y ALUControl a 4 bits.
+// 2) decode     - mapeo de UMUL, SMUL y DIV.
+// 3) mainfsm    - estados DIV1 y DIV2.
+// 4) datapath   - soporte para ALUControl de 4 bits.
+// 5) controller - conexión de la señal ampliada.
+// 6) arm        - propagación de ALUControl.
+// Los demás módulos se mantienen sin cambios funcionales.
 
 //---------------------- Top level ----------------------
+// Sin cambios funcionales, solo unificación en un archivo.
 module top(
     input wire clk,
     input wire reset,
@@ -34,6 +43,7 @@ module top(
 endmodule
 
 //---------------------- Memoria simple ----------------------
+// Sin modificaciones necesarias para MUL/DIV.
 module mem(
     input wire clk,
     input wire we,
@@ -51,6 +61,8 @@ module mem(
 endmodule
 
 //---------------------- Procesador ----------------------
+// Ajustes para nuevas operaciones de la ALU:
+// ALUControl ahora es de 4 bits para codificar UMUL, SMUL y DIV.
 module arm(
     input wire clk,
     input wire reset,
@@ -115,6 +127,7 @@ module arm(
 endmodule
 
 //---------------------- Unidad de Control ----------------------
+// Ajustado para 4 bits de ALUControl que permiten MUL y DIV.
 module controller(
     input wire clk,
     input wire reset,
@@ -185,6 +198,9 @@ endmodule
 // 0101 -> SMUL (con signo)
 // 0110 -> Reservado
 // 0111 -> DIV
+// Cambios para soportar multiplicación y división:
+// 1. ALUControl ampliado a 4 bits.
+// 2. Se codifican UMUL, SMUL y DIV.
 module decode(
     input wire clk,
     input wire reset,
@@ -245,6 +261,9 @@ module decode(
 endmodule
 
 //---------------------- FSM principal ----------------------
+// Cambios en la FSM para soportar multiplicación y división:
+// 1. Estados DIV1 y DIV2 para la instrucción DIV.
+// 2. Se detecta DIV en DECODE.
 module mainfsm(
     input wire clk,
     input wire reset,
@@ -336,6 +355,7 @@ endmodule
 
 //---------------------- Lógica de Condición ----------------------
 module condlogic(
+// Sin cambios para nuevas operaciones.
     input wire clk,
     input wire reset,
     input wire [3:0] Cond,
@@ -363,6 +383,7 @@ module condlogic(
 endmodule
 
 //---------------------- Verificación de Condición ----------------------
+// Sin cambios para nuevas operaciones.
 module condcheck(
     input wire [3:0] Cond,
     input wire [3:0] Flags,
@@ -400,6 +421,7 @@ endmodule
 // Este módulo conecta PC, registro de instrucciones, ALU y memoria.
 // Mediante multiplexores controla el flujo de datos para ejecutar
 // UMUL, SMUL y DIV además de las instrucciones básicas.
+// Adaptado para ALUControl de 4 bits.
 module datapath(
     input wire clk,
     input wire reset,
@@ -460,6 +482,7 @@ endmodule
 
 //---------------------- Banco de Registros ----------------------
 module regfile(
+// Sin cambios para MUL/DIV.
     input wire clk,
     input wire we3,
     input wire [3:0] ra1,
@@ -482,6 +505,7 @@ endmodule
 
 //---------------------- Extensor de Inmediatos ----------------------
 module extend(
+// Sin cambios para MUL/DIV.
     input wire [23:0] Instr,
     input wire [1:0] ImmSrc,
     output reg [31:0] ExtImm
@@ -497,6 +521,10 @@ endmodule
 
 //---------------------- ALU ----------------------
 // UMUL, SMUL y DIV implementados aquí.
+// Cambios para habilitar multiplicación y división:
+// 1. ALUControl de 4 bits.
+// 2. UMUL y SMUL agregados.
+// 3. DIV protegido contra cero.
 module alu(
     input wire [31:0] a,
     input wire [31:0] b,
@@ -529,6 +557,7 @@ endmodule
 
 //---------------------- Bloques genéricos ----------------------
 module flopr #(parameter WIDTH = 8)(
+// Sin cambios para MUL/DIV.
     input wire clk,
     input wire reset,
     input wire [WIDTH-1:0] d,
@@ -542,6 +571,7 @@ module flopr #(parameter WIDTH = 8)(
 endmodule
 
 module flopenr #(parameter WIDTH = 8)(
+// Sin cambios para MUL/DIV.
     input wire clk,
     input wire reset,
     input wire en,
@@ -556,6 +586,7 @@ module flopenr #(parameter WIDTH = 8)(
 endmodule
 
 module mux2 #(parameter WIDTH = 8)(
+// Sin cambios para MUL/DIV.
     input wire [WIDTH-1:0] d0,
     input wire [WIDTH-1:0] d1,
     input wire s,
@@ -565,6 +596,7 @@ module mux2 #(parameter WIDTH = 8)(
 endmodule
 
 module mux3 #(parameter WIDTH = 8)(
+// Sin cambios para MUL/DIV.
     input wire [WIDTH-1:0] d0,
     input wire [WIDTH-1:0] d1,
     input wire [WIDTH-1:0] d2,
