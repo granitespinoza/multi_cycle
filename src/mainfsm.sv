@@ -28,7 +28,9 @@ module mainfsm(
                      EXECUTEI = 7,
                      ALUWB    = 8,
                      BRANCH   = 9,
-                     UNKNOWN  = 10;
+                     UNKNOWN  = 10,
+                     DIV1     = 11,
+                     DIV2     = 12;
 
     always @(posedge clk or posedge reset)
         if (reset)
@@ -40,13 +42,22 @@ module mainfsm(
         casex (state)
             FETCH:    nextstate = DECODE;
             DECODE:   case (Op)
-                        2'b00: nextstate = Funct[5] ? EXECUTEI : EXECUTER;
+                        2'b00: begin
+                            if (Funct[5])
+                                nextstate = EXECUTEI;
+                            else if (Funct[4:1] == 4'b1010)
+                                nextstate = DIV1;
+                            else
+                                nextstate = EXECUTER;
+                        end
                         2'b01: nextstate = MEMADR;
                         2'b10: nextstate = BRANCH;
                         default: nextstate = UNKNOWN;
                        endcase
             EXECUTER: nextstate = ALUWB;
             EXECUTEI: nextstate = ALUWB;
+            DIV1:     nextstate = DIV2;
+            DIV2:     nextstate = ALUWB;
             MEMADR:   nextstate = Funct[0] ? MEMRD : MEMWR;
             MEMRD:    nextstate = MEMWB;
             MEMWR:    nextstate = FETCH;
@@ -62,6 +73,8 @@ module mainfsm(
             DECODE:   controls = 13'b0000001001100;
             EXECUTER: controls = 13'b0000000000001;
             EXECUTEI: controls = 13'b0000000000101;
+            DIV1:     controls = 13'b0000000000001;
+            DIV2:     controls = 13'b0000000000001;
             ALUWB:    controls = 13'b0001000000000;
             MEMADR:   controls = 13'b0000000000100;
             MEMWR:    controls = 13'b0010010000000;

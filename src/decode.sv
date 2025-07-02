@@ -16,7 +16,7 @@ module decode(
     output wire [1:0] ALUSrcB,
     output wire [1:0] ImmSrc,
     output wire [1:0] RegSrc,
-    output wire [2:0] ALUControl
+    output wire [3:0] ALUControl
 );
     wire Branch;
     wire ALUOp;
@@ -38,15 +38,18 @@ module decode(
         .ALUOp(ALUOp)
     );
 
-    assign ALUControl = ALUOp ? (Funct[4:1] == 4'b0100 ? 3'b000 :
-                                 Funct[4:1] == 4'b0010 ? 3'b001 :
-                                 Funct[4:1] == 4'b0000 ? 3'b010 :
-                                 Funct[4:1] == 4'b1100 ? 3'b011 :
-                                 Funct[4:1] == 4'b0001 ? 3'b100 :
-                                 3'bxxx) : 3'b000;
+    assign ALUControl = ALUOp ? (Funct[4:1] == 4'b0100 ? 4'b0000 :
+                                 Funct[4:1] == 4'b0010 ? 4'b0001 :
+                                 Funct[4:1] == 4'b0000 ? 4'b0010 :
+                                 Funct[4:1] == 4'b1100 ? 4'b0011 :
+                                 Funct[4:1] == 4'b0001 ? 4'b0100 :
+                                 Funct[4:1] == 4'b1000 ? 4'b0101 :
+                                 Funct[4:1] == 4'b1001 ? 4'b0110 :
+                                 Funct[4:1] == 4'b1010 ? 4'b0111 :
+                                 4'bxxxx) : 4'b0000;
 
     assign FlagW[1] = ALUOp & Funct[0];
-    assign FlagW[0] = ALUOp & Funct[0] & (ALUControl == 3'b000 || ALUControl == 3'b001);
+    assign FlagW[0] = ALUOp & Funct[0] & (ALUControl == 4'b0000 || ALUControl == 4'b0001);
 
     assign PCS = Branch | (RegW & (Rd == 4'b1111));
     assign ImmSrc = Op;
